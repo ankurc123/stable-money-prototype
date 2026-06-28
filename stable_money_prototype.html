@@ -419,6 +419,7 @@
       <div style="display:flex;gap:8px;padding:0 16px;margin-bottom:14px">
         <div class="pill active" id="pill-push" onclick="switchTab('push')" style="flex:1;text-align:center">T-7 Push</div>
         <div class="pill" id="pill-sms" onclick="switchTab('sms')" style="flex:1;text-align:center">T-3 SMS</div>
+        <div class="pill" id="pill-day0" onclick="switchTab('day0')" style="flex:1;text-align:center">Day 0</div>
       </div>
 
       <!-- TAB: PUSH -->
@@ -457,6 +458,24 @@
               <div class="notif-time" style="color:rgba(255,255,255,0.5)">Today, 10:00 AM</div>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- TAB: DAY 0 -->
+      <div id="tab-day0" style="display:none;padding:0 12px">
+        <div class="highlight-card" onclick="goScreen('earnings')" style="background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);border-radius:16px;padding:14px;cursor:pointer;border:1px solid rgba(255,255,255,0.25)">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <div style="width:28px;height:28px;border-radius:8px;background:#1A6B3C;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div style="font-size:11px;font-weight:700;color:#fff">Stable Money</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.6);margin-left:auto">9:00 AM</div>
+          </div>
+          <div style="font-size:12px;color:#fff;line-height:1.5">Your ₹1,00,000 FD with Suryoday Small Finance Bank has matured today. Your maturity amount is ₹1,09,100. Tap to view.</div>
+        </div>
+        <div class="hint" style="margin-top:12px;color:rgba(255,255,255,0.6)">
+          <svg viewBox="0 0 24 24" style="stroke:rgba(255,255,255,0.6)"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Tap to open Earnings Summary directly →
         </div>
       </div>
 
@@ -610,7 +629,7 @@
   }
 
   function switchTab(tab) {
-    ['push','sms'].forEach(t => {
+    ['push','sms','day0'].forEach(t => {
       document.getElementById('tab-'+t).style.display  = t===tab ? 'block' : 'none';
       document.getElementById('pill-'+t).className = 'pill' + (t===tab ? ' active' : '');
     });
