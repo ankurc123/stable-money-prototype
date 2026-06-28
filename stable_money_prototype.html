@@ -121,7 +121,7 @@
 
   /* ── NOTIFICATION SCREEN ── */
   .pill-row{display:flex;gap:6px;margin-bottom:14px}
-  .pill{padding:6px 14px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;border:1.5px solid #C8D0D8;background:#fff;color:#5D6D7E;transition:all 0.15s}
+  .pill{padding:9px 22px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid #C8D0D8;background:#fff;color:#5D6D7E;transition:all 0.15s}
   .pill.active{background:#1A5276;color:#fff;border-color:#1A5276}
 
   .notif-card{background:#fff;border:1px solid #E2E8F0;border-radius:12px;padding:12px;margin-bottom:10px;display:flex;gap:10px;cursor:pointer;transition:border-color 0.15s}
@@ -412,7 +412,6 @@
       <div class="pill-row">
         <div class="pill active" id="pill-push" onclick="switchTab('push')">T-7 Push</div>
         <div class="pill" id="pill-sms" onclick="switchTab('sms')">T-3 SMS</div>
-        <div class="pill" id="pill-day0" onclick="switchTab('day0')">Day 0</div>
       </div>
 
       <!-- TAB: PUSH -->
@@ -454,19 +453,7 @@
       </div>
 
       <!-- TAB: DAY 0 -->
-      <div id="tab-day0" style="display:none">
-        <div class="sec-title">Day 0 — Maturity day push</div>
-        <div class="notif-card" onclick="goScreen('earnings')">
-          <div class="notif-icon" style="background:#E8F8F0">
-            <svg viewBox="0 0 24 24" stroke="#1A6B3C"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-          </div>
-          <div class="notif-content">
-            <div class="notif-title">Stable Money</div>
-            <div class="notif-body">Your ₹1,00,000 FD with Suryoday Small Finance Bank has matured today. Your maturity amount is ₹1,09,100. Tap to view.</div>
-            <div class="notif-time">Today, 9:00 AM</div>
-          </div>
-        </div>
-      </div>
+
     </div>
     <div class="bottom-nav">
       <div class="bnav-item"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</div>
@@ -544,7 +531,7 @@
   }
 
   function switchTab(tab) {
-    ['push','sms','day0'].forEach(t => {
+    ['push','sms'].forEach(t => {
       document.getElementById('tab-'+t).style.display  = t===tab ? 'block' : 'none';
       document.getElementById('pill-'+t).className = 'pill' + (t===tab ? ' active' : '');
     });
