@@ -70,7 +70,6 @@
   .home-logo-icon{width:32px;height:32px;background:#1A5276;border-radius:8px;display:flex;align-items:center;justify-content:center}
   .home-logo-icon svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2}
   .home-logo-text{font-size:15px;font-weight:700;color:#1C2833;letter-spacing:-0.3px}
-  .home-avatar{width:32px;height:32px;border-radius:50%;background:#EBF5FB;border:2px solid #D6EAF8;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#1A5276}
   .home-section-title{font-size:13px;font-weight:700;color:#1C2833;margin:16px 14px 10px}
   .shortcuts-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 14px}
   .shortcut-card{background:#fff;border:1px solid #E8EDF2;border-radius:12px;padding:12px;display:flex;flex-direction:column;justify-content:space-between;min-height:72px;cursor:default}
@@ -226,7 +225,7 @@
         </div>
         <span class="home-logo-text">stable money</span>
       </div>
-      <div class="home-avatar">AN</div>
+      <div style="width:32px;height:32px;border-radius:50%;background:#EBF5FB;border:1.5px solid #D6EAF8;display:flex;align-items:center;justify-content:center;cursor:pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1A5276" stroke-width="1.8"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
     </div>
     <div class="home-body">
 
@@ -348,7 +347,7 @@
       </div>
 
       <!-- CARD 2 -->
-      <div class="fd-card">
+      <div class="fd-card" onclick="goScreen('earnings-unity')" title="Tap to view FD details" style="cursor:pointer">
         <div class="fd-card-head">
           <div class="bank-name">Unity Small Finance Bank</div>
           <div class="badge badge-active">Active</div>
@@ -366,7 +365,7 @@
       </div>
 
       <!-- CARD 3 -->
-      <div class="fd-card">
+      <div class="fd-card" onclick="goScreen('earnings-esaf')" title="Tap to view FD details" style="cursor:pointer">
         <div class="fd-card-head">
           <div class="bank-name">ESAF Small Finance Bank</div>
           <div class="badge badge-active">Active</div>
@@ -385,14 +384,14 @@
 
       <div class="hint">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        Tap the Suryoday card to continue →
+        7 days later — tap to simulate maturity notification →
       </div>
     </div>
     <div class="bottom-nav">
-      <div class="bnav-item"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</div>
-      <div class="bnav-item active"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>My FDs</div>
-      <div class="bnav-item"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Returns</div>
-      <div class="bnav-item"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profile</div>
+      <div class="bnav-item" onclick="goScreen('home')"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>FD</div>
+      <div class="bnav-item"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Bonds</div>
+      <div class="bnav-item"><svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>FD Card</div>
+      <div class="bnav-item active"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>Passbook</div>
     </div>
   </div>
 
@@ -406,7 +405,7 @@
         My FDs
       </div>
       <h2>Notifications</h2>
-      <p>Pre-maturity alerts · S1</p>
+      <p>Notification received on your phone · S1</p>
     </div>
     <div class="body">
       <div class="pill-row">
@@ -456,10 +455,10 @@
 
     </div>
     <div class="bottom-nav">
-      <div class="bnav-item"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</div>
-      <div class="bnav-item active"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>Alerts</div>
-      <div class="bnav-item"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Returns</div>
-      <div class="bnav-item"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profile</div>
+      <div class="bnav-item" onclick="goScreen('home')"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>FD</div>
+      <div class="bnav-item"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Bonds</div>
+      <div class="bnav-item"><svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>FD Card</div>
+      <div class="bnav-item active"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>Passbook</div>
     </div>
   </div>
 
@@ -502,6 +501,85 @@
       </button>
     </div>
   </div>
+
+  <!-- ════════════════════════════════════
+       SCREEN — FD DETAIL S2 (UNITY)
+       ════════════════════════════════════ -->
+  <div class="screen" id="screen-earnings-unity">
+    <div class="earn-hero">
+      <div class="eh-bank">Unity Small Finance Bank</div>
+      <div class="eh-badge" style="background:rgba(255,255,255,0.15)">
+        <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+        Active FD
+      </div>
+      <div class="eh-date">Matures 28 Dec 2026 · 184 days left</div>
+      <div class="eh-amount">₹1,71,375</div>
+      <div class="eh-amount-label">projected maturity amount</div>
+    </div>
+    <div class="body" style="padding-top:14px">
+
+      <div class="sec-title">Projected earnings</div>
+      <div class="earn-card">
+        <div class="earn-row"><span class="earn-label">Principal invested</span><span class="earn-value">₹1,50,000</span></div>
+        <div class="earn-row"><span class="earn-label">Projected interest</span><span class="earn-value green">+ ₹21,375.00</span></div>
+        <div class="earn-row"><span class="earn-label">Interest rate</span><span class="earn-value green">9.50% p.a.</span></div>
+        <div class="earn-row"><span class="earn-label bold">Projected maturity amount</span><span class="earn-value big">₹1,71,375.00</span></div>
+      </div>
+
+      <div class="sec-title">FD details</div>
+      <div class="earn-card">
+        <div class="earn-row"><span class="earn-label">Partner bank</span><span class="earn-value">Unity SFB</span></div>
+        <div class="earn-row"><span class="earn-label">Booking date</span><span class="earn-value">28 Jun 2025</span></div>
+        <div class="earn-row"><span class="earn-label">Tenure</span><span class="earn-value">18 months</span></div>
+        <div class="earn-row"><span class="earn-label">Maturity date</span><span class="earn-value">28 Dec 2026</span></div>
+      </div>
+
+      <button class="back-btn" onclick="goScreen('dashboard')" style="border-color:#1A5276;color:#1A5276">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        Back to portfolio
+      </button>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════
+       SCREEN — FD DETAIL S2 (ESAF)
+       ════════════════════════════════════ -->
+  <div class="screen" id="screen-earnings-esaf">
+    <div class="earn-hero">
+      <div class="eh-bank">ESAF Small Finance Bank</div>
+      <div class="eh-badge" style="background:rgba(255,255,255,0.15)">
+        <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+        Active FD
+      </div>
+      <div class="eh-date">Matures 27 Jun 2028 · 730 days left</div>
+      <div class="eh-amount">₹1,17,500</div>
+      <div class="eh-amount-label">projected maturity amount</div>
+    </div>
+    <div class="body" style="padding-top:14px">
+
+      <div class="sec-title">Projected earnings</div>
+      <div class="earn-card">
+        <div class="earn-row"><span class="earn-label">Principal invested</span><span class="earn-value">₹1,00,000</span></div>
+        <div class="earn-row"><span class="earn-label">Projected interest</span><span class="earn-value green">+ ₹17,500.00</span></div>
+        <div class="earn-row"><span class="earn-label">Interest rate</span><span class="earn-value green">8.75% p.a.</span></div>
+        <div class="earn-row"><span class="earn-label bold">Projected maturity amount</span><span class="earn-value big">₹1,17,500.00</span></div>
+      </div>
+
+      <div class="sec-title">FD details</div>
+      <div class="earn-card">
+        <div class="earn-row"><span class="earn-label">Partner bank</span><span class="earn-value">ESAF SFB</span></div>
+        <div class="earn-row"><span class="earn-label">Booking date</span><span class="earn-value">27 Jun 2026</span></div>
+        <div class="earn-row"><span class="earn-label">Tenure</span><span class="earn-value">24 months</span></div>
+        <div class="earn-row"><span class="earn-label">Maturity date</span><span class="earn-value">27 Jun 2028</span></div>
+      </div>
+
+      <button class="back-btn" onclick="goScreen('dashboard')" style="border-color:#1A5276;color:#1A5276">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        Back to portfolio
+      </button>
+    </div>
+  </div>
+
 </div>
 
 <!-- NAV BUTTONS -->
@@ -510,7 +588,7 @@
 <div class="watermark">Stable Money · Phase 1 Prototype · PM Launchpad Cohort 31 · Ankur</div>
 
 <script>
-  const screens = ['home','dashboard','notif','earnings'];
+  const screens = ['home','dashboard','notif','earnings','earnings-unity','earnings-esaf'];
 
   function goScreen(id) {
     screens.forEach(s => {
