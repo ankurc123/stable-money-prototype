@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stable Money — Phase 1 Prototype</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F0F4F8;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px 16px 40px}
+
+  /* ── TOP BAR ── */
+  .top-bar{width:100%;max-width:480px;margin-bottom:16px;text-align:center}
+  .top-bar h1{font-size:15px;font-weight:600;color:#1A5276;letter-spacing:0.3px}
+  .top-bar p{font-size:11px;color:#7F8C8D;margin-top:3px}
+
+  /* ── STEP INDICATOR ── */
+  .steps{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:16px;width:100%;max-width:480px}
+  .step{display:flex;align-items:center;gap:5px;cursor:default;padding:5px 3px;border-radius:8px;flex-shrink:0}
+  
+  .step-circle{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;transition:all 0.2s}
+  .step-circle.done{background:#1A5276;color:#fff}
+  .step-circle.active{background:#2471A3;color:#fff;box-shadow:0 0 0 3px rgba(36,113,163,0.2)}
+  .step-circle.idle{background:#E8EDF2;color:#7F8C8D}
+  .step-label{font-size:9px;font-weight:500;color:#7F8C8D;white-space:nowrap;line-height:1}
+  .step-label.active{color:#1A5276;font-weight:600}
+  .step-connector{width:16px;height:2px;background:#D5DBDF;border-radius:1px;flex-shrink:0;transition:background 0.2s}
+  .step-connector.done{background:#1A5276}
+
+  /* ── PHONE ── */
+  .phone{width:340px;background:#F5F7F9;border-radius:36px;border:2px solid #C8D0D8;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.12),0 2px 8px rgba(0,0,0,0.08)}
+  .status-bar{background:#1A5276;height:38px;display:flex;align-items:center;justify-content:space-between;padding:0 20px}
+  .status-bar span{color:#fff;font-size:11px;font-weight:500}
+  .screen{display:none;flex-direction:column;min-height:580px}
+  .screen.active{display:flex}
+
+  /* ── NAV BAR ── */
+  .nav-bar{background:#1A5276;padding:14px 18px 12px}
+  .nav-back{font-size:11px;color:rgba(255,255,255,0.75);cursor:pointer;margin-bottom:3px;display:inline-flex;align-items:center;gap:4px}
+  .nav-back:hover{color:#fff}
+  .nav-bar h2{font-size:17px;font-weight:600;color:#fff;letter-spacing:-0.2px}
+  .nav-bar p{font-size:11px;color:rgba(255,255,255,0.7);margin-top:2px}
+
+  /* ── BODY ── */
+  .body{flex:1;overflow-y:auto;padding:14px 14px 72px;background:#F5F7F9}
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav{position:absolute;bottom:0;left:0;right:0;height:64px;background:#fff;border-top:1px solid #E8EDF2;display:flex;align-items:center;justify-content:space-around}
+  .bnav-item{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:9px;font-weight:500;color:#AAB4BD;cursor:pointer;padding:4px 8px}
+  .bnav-item svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8}
+  .bnav-item.active{color:#1A5276}
+
+  /* ── HIGHLIGHT PULSE ── */
+  @keyframes pulse-ring {
+    0%   { box-shadow: 0 0 0 0 rgba(26,82,118,0.45); }
+    70%  { box-shadow: 0 0 0 7px rgba(26,82,118,0); }
+    100% { box-shadow: 0 0 0 0 rgba(26,82,118,0); }
+  }
+  .highlight-tap{animation:pulse-ring 1.6s ease-out infinite;border-color:#1A5276 !important;position:relative}
+  .highlight-tap::after{content:'Tap';position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:700;color:#1A5276;background:#EBF5FB;padding:2px 6px;border-radius:4px;border:1px solid #1A5276;white-space:nowrap}
+  @keyframes pulse-amber {
+    0%   { box-shadow: 0 0 0 0 rgba(243,156,18,0.5); }
+    70%  { box-shadow: 0 0 0 7px rgba(243,156,18,0); }
+    100% { box-shadow: 0 0 0 0 rgba(243,156,18,0); }
+  }
+  .highlight-card{animation:pulse-ring 1.6s ease-out infinite;border-color:#1A5276 !important}
+
+  /* ── HOME SCREEN ── */
+  .home-header{background:#fff;padding:14px 16px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #EEF2F7}
+  .home-logo{display:flex;align-items:center;gap:8px}
+  .home-logo-icon{width:32px;height:32px;background:#1A5276;border-radius:8px;display:flex;align-items:center;justify-content:center}
+  .home-logo-icon svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2}
+  .home-logo-text{font-size:15px;font-weight:700;color:#1C2833;letter-spacing:-0.3px}
+  .home-avatar{width:32px;height:32px;border-radius:50%;background:#EBF5FB;border:2px solid #D6EAF8;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#1A5276}
+  .home-section-title{font-size:13px;font-weight:700;color:#1C2833;margin:16px 14px 10px}
+  .shortcuts-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 14px}
+  .shortcut-card{background:#fff;border:1px solid #E8EDF2;border-radius:12px;padding:12px;display:flex;flex-direction:column;justify-content:space-between;min-height:72px;cursor:default}
+  .shortcut-label{font-size:11px;font-weight:600;color:#1C2833;line-height:1.3}
+  .shortcut-sub{font-size:9px;color:#7F8C8D;margin-top:2px}
+  .shortcut-icon{width:32px;height:32px;border-radius:8px;background:#F0EAFF;display:flex;align-items:center;justify-content:center;align-self:flex-end;margin-top:6px}
+  .shortcut-icon svg{width:16px;height:16px;stroke:#7B5CF0;fill:none;stroke-width:1.8}
+  .compare-strip{background:#fff;border:1px solid #E8EDF2;border-radius:12px;padding:12px 14px;margin:10px 14px 0;display:flex;align-items:center;justify-content:space-between;cursor:default}
+  .compare-text{font-size:12px;font-weight:600;color:#1C2833}
+  .bank-dots{display:flex;gap:4px;align-items:center}
+  .bank-dot{width:22px;height:22px;border-radius:50%;background:#EBF5FB;border:1px solid #D6EAF8;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#1A5276}
+  .home-body{flex:1;overflow-y:auto;padding-bottom:72px;background:#F5F7F9}
+
+
+  /* ── SUMMARY STRIP ── */
+  .summary-strip{background:#1A5276;margin:-14px -14px 14px;padding:14px 14px 16px;display:flex;justify-content:space-between}
+  .ss-item{text-align:center;flex:1}
+  .ss-label{font-size:9px;color:rgba(255,255,255,0.7);font-weight:500;text-transform:uppercase;letter-spacing:0.3px}
+  .ss-val{font-size:14px;font-weight:600;color:#fff;margin-top:3px}
+
+  /* ── LEGEND ── */
+  .legend{display:flex;gap:14px;margin-bottom:12px;padding:0 2px}
+  .leg{display:flex;align-items:center;gap:5px;font-size:10px;color:#5D6D7E;font-weight:500}
+  .leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+  /* ── SECTION TITLE ── */
+  .sec-title{font-size:10px;font-weight:600;color:#7F8C8D;text-transform:uppercase;letter-spacing:0.5px;margin:14px 0 8px}
+
+  /* ── FD CARDS ── */
+  .fd-card{background:#fff;border:1px solid #E2E8F0;border-radius:12px;padding:12px;margin-bottom:10px;cursor:pointer;transition:border-color 0.15s,box-shadow 0.15s;position:relative;overflow:hidden}
+  .fd-card:hover{border-color:#2471A3;box-shadow:0 2px 8px rgba(36,113,163,0.1)}
+  .fd-card.soon{border-left:3px solid #E67E22}
+  .fd-card-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;gap:8px}
+  .bank-name{font-size:12px;font-weight:600;color:#1C2833;line-height:1.3}
+  .badge{font-size:9px;font-weight:600;padding:3px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+  .badge-active{background:#E8F8F0;color:#1A6B3C}
+  .badge-soon{background:#FEF3E2;color:#B7460C}
+  .badge-matured{background:#F0F4F8;color:#7F8C8D}
+  .fd-rows{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+  .fd-row{display:flex;justify-content:space-between}
+  .fd-label{font-size:10px;color:#7F8C8D}
+  .fd-val{font-size:10px;color:#1C2833;font-weight:500}
+  .fd-footer{border-top:1px solid #EEF2F7;padding-top:8px;display:flex;justify-content:space-between;align-items:center}
+  .countdown-big{font-size:16px;font-weight:700;color:#1A5276}
+  .countdown-sub{font-size:9px;color:#7F8C8D;margin-top:1px}
+  .proj-amt{font-size:11px;font-weight:600;color:#1A6B3C}
+  .proj-label{font-size:9px;color:#7F8C8D;text-align:right;margin-top:1px}
+
+  /* ── NOTIFICATION SCREEN ── */
+  .pill-row{display:flex;gap:6px;margin-bottom:14px}
+  .pill{padding:6px 14px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;border:1.5px solid #C8D0D8;background:#fff;color:#5D6D7E;transition:all 0.15s}
+  .pill.active{background:#1A5276;color:#fff;border-color:#1A5276}
+
+  .notif-card{background:#fff;border:1px solid #E2E8F0;border-radius:12px;padding:12px;margin-bottom:10px;display:flex;gap:10px;cursor:pointer;transition:border-color 0.15s}
+  .notif-card:hover{border-color:#1A5276}
+  .notif-icon{width:38px;height:38px;border-radius:10px;background:#EBF5FB;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .notif-icon svg{width:18px;height:18px;stroke:#1A5276;fill:none;stroke-width:1.8}
+  .notif-content{flex:1;min-width:0}
+  .notif-title{font-size:11px;font-weight:600;color:#1C2833;margin-bottom:2px}
+  .notif-body{font-size:10px;color:#5D6D7E;line-height:1.5}
+  .notif-time{font-size:9px;color:#AAB4BD;margin-top:4px}
+  .tag-orange{background:#FEF3E2;color:#B7460C}
+  .tag-green{background:#E8F8F0;color:#1A6B3C}
+
+  .sms-bubble{background:#E8F8F0;border:1px solid #C3E6CB;border-radius:12px 12px 12px 3px;padding:10px 12px;font-size:10px;color:#1A6B3C;line-height:1.6;margin-bottom:10px}
+  .sms-bubble strong{font-weight:600}
+
+  .check-icon{width:16px;height:16px;border-radius:50%;background:#E8F8F0;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .check-icon svg{width:10px;height:10px;stroke:#1A6B3C;fill:none;stroke-width:2.5}
+  .constraint-key{color:#1C2833;font-weight:500;min-width:60px}
+  .constraint-desc{color:#5D6D7E}
+
+  /* ── EARNINGS SCREEN ── */
+  .earn-hero{background:#1A5276;padding:22px 20px 20px;text-align:center;color:#fff}
+  .eh-bank{font-size:11px;color:rgba(255,255,255,0.7);margin-bottom:8px}
+  .eh-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.15);border-radius:20px;padding:5px 12px;font-size:11px;font-weight:500;margin-bottom:10px}
+  .eh-badge svg{width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2}
+  .eh-date{font-size:11px;color:rgba(255,255,255,0.7);margin-bottom:8px}
+  .eh-amount{font-size:30px;font-weight:700;letter-spacing:-0.5px}
+  .eh-amount-label{font-size:10px;color:rgba(255,255,255,0.65);margin-top:3px}
+
+  .earn-card{background:#fff;border:1px solid #E2E8F0;border-radius:12px;padding:0 12px;margin-bottom:10px;overflow:hidden}
+  .earn-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #F0F4F8}
+  .earn-row:last-child{border-bottom:none}
+  .earn-label{font-size:11px;color:#7F8C8D}
+  .earn-label.bold{font-weight:600;color:#1C2833}
+  .earn-value{font-size:11px;font-weight:500;color:#1C2833}
+  .earn-value.green{color:#1A6B3C}
+  .earn-value.big{font-size:15px;font-weight:700;color:#1A5276}
+
+  .back-btn{width:100%;padding:11px;border:1.5px solid #C8D0D8;border-radius:10px;background:#fff;font-size:12px;font-weight:500;color:#1A5276;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.15s}
+  .back-btn:hover{background:#EBF5FB;border-color:#1A5276}
+  .back-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+
+  /* ── HINT ── */
+  .hint{font-size:10px;color:#AAB4BD;text-align:center;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:4px}
+  .hint svg{width:12px;height:12px;stroke:#AAB4BD;fill:none;stroke-width:1.8}
+
+  /* ── NAV BUTTONS ── */
+  
+  
+
+  /* ── WATERMARK ── */
+  .watermark{font-size:10px;color:#CBD5E0;text-align:center;margin-top:14px}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <h1>Stable Money — Phase 1 Interactive Prototype</h1>
+  <p>S5 Portfolio Dashboard &nbsp;·&nbsp; S1 Maturity Notifications &nbsp;·&nbsp; S2 Earnings Summary</p>
+</div>
+
+<!-- STEP INDICATOR -->
+<div class="steps" id="steps-bar">
+  <div class="step">
+    <div class="step-circle active" id="sc1">1</div>
+    <div class="step-label active" id="sl1">Home</div>
+  </div>
+  <div class="step-connector" id="conn1"></div>
+  <div class="step">
+    <div class="step-circle idle" id="sc2">2</div>
+    <div class="step-label" id="sl2">S5 Dashboard</div>
+  </div>
+  <div class="step-connector" id="conn2"></div>
+  <div class="step">
+    <div class="step-circle idle" id="sc3">3</div>
+    <div class="step-label" id="sl3">S1 Notification</div>
+  </div>
+  <div class="step-connector" id="conn3"></div>
+  <div class="step">
+    <div class="step-circle idle" id="sc4">4</div>
+    <div class="step-label" id="sl4">S2 Earnings</div>
+  </div>
+</div>
+
+<!-- PHONE -->
+<div class="phone" style="position:relative">
+  <div class="status-bar">
+    <span>9:41 AM</span>
+    <span>Stable Money</span>
+    <span>5G ▪ ⚡</span>
+  </div>
+
+  <!-- ════════════════════════════════════
+       SCREEN 0 — HOME (LANDING)
+       ════════════════════════════════════ -->
+  <div class="screen active" id="screen-home">
+    <div class="home-header">
+      <div class="home-logo">
+        <div class="home-logo-icon">
+          <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </div>
+        <span class="home-logo-text">stable money</span>
+      </div>
+      <div class="home-avatar">AN</div>
+    </div>
+    <div class="home-body">
+
+      <!-- SHORTCUTS -->
+      <div class="home-section-title">What's on your mind?</div>
+      <div class="shortcuts-grid">
+        <div class="shortcut-card">
+          <div>
+            <div class="shortcut-label">High returns</div>
+          </div>
+          <div class="shortcut-icon">
+            <svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          </div>
+        </div>
+        <div class="shortcut-card">
+          <div>
+            <div class="shortcut-label">View all FDs</div>
+          </div>
+          <div class="shortcut-icon">
+            <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          </div>
+        </div>
+        <div class="shortcut-card">
+          <div>
+            <div class="shortcut-label">Monthly payouts</div>
+          </div>
+          <div class="shortcut-icon">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+          </div>
+        </div>
+        <div class="shortcut-card">
+          <div>
+            <div class="shortcut-label">No penalty withdrawal</div>
+          </div>
+          <div class="shortcut-icon">
+            <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- GAP CALLOUT -->
+      <div style="margin:14px 14px 0;padding:10px 12px;background:#FFF8E1;border:1px solid #FFE082;border-radius:10px;display:flex;align-items:center;gap:8px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B7460C" stroke-width="2" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span style="font-size:10px;color:#7B3F00;line-height:1.4">Today, users must find their own way to their FDs. Tap <strong>Passbook</strong> below — this is the gap S1 + S5 solve.</span>
+      </div>
+
+      <!-- COMPARE STRIP -->
+      <div class="compare-strip">
+        <span class="compare-text">Compare 200+ banks</span>
+        <div class="bank-dots">
+          <div class="bank-dot">SB</div>
+          <div class="bank-dot">HD</div>
+          <div class="bank-dot">IC</div>
+          <div class="bank-dot">AX</div>
+          <span style="font-size:11px;color:#1A5276;font-weight:600">›</span>
+        </div>
+      </div>
+
+    </div>
+    <div class="bottom-nav">
+      <div class="bnav-item active" onclick="goScreen('home')">
+        <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>FD
+      </div>
+      <div class="bnav-item">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Bonds
+      </div>
+      <div class="bnav-item">
+        <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>FD Card
+      </div>
+      <div class="bnav-item highlight-tap" onclick="goScreen('dashboard')" style="border:2px solid #1A5276;border-radius:8px;color:#1A5276;background:#EBF5FB;padding:4px 8px">
+        <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>Passbook
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════
+       SCREEN 2 — PORTFOLIO DASHBOARD (S5)
+       ════════════════════════════════════ -->
+  <div class="screen" id="screen-dashboard">
+    <div class="nav-bar">
+      <div class="nav-back" onclick="goScreen('home')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        Home
+      </div>
+      <h2>My FDs</h2>
+      <p>3 active deposits</p>
+    </div>
+    <div class="body">
+      <div class="summary-strip">
+        <div class="ss-item"><div class="ss-label">Active FDs</div><div class="ss-val">3</div></div>
+        <div class="ss-item"><div class="ss-label">Total invested</div><div class="ss-val">₹3,50,000</div></div>
+        <div class="ss-item"><div class="ss-label">Projected total</div><div class="ss-val">₹3,83,490</div></div>
+      </div>
+
+      <div class="legend">
+        <div class="leg"><div class="leg-dot" style="background:#1A6B3C"></div>Active</div>
+        <div class="leg"><div class="leg-dot" style="background:#E67E22"></div>Maturing soon</div>
+        <div class="leg"><div class="leg-dot" style="background:#AAB4BD"></div>Matured</div>
+      </div>
+
+      <div class="sec-title">Soonest maturity first</div>
+
+      <!-- CARD 1 — MATURING SOON -->
+      <div class="fd-card soon highlight-card" onclick="goScreen('notif')" title="Tap to see T-7 notification">
+        <div class="fd-card-head">
+          <div class="bank-name">Suryoday Small Finance Bank</div>
+          <div class="badge badge-soon">Maturing soon</div>
+        </div>
+        <div class="fd-rows">
+          <div class="fd-row"><span class="fd-label">Principal</span><span class="fd-val">₹1,00,000</span></div>
+          <div class="fd-row"><span class="fd-label">Rate</span><span class="fd-val">9.10% p.a.</span></div>
+          <div class="fd-row"><span class="fd-label">Tenure</span><span class="fd-val">12 months</span></div>
+          <div class="fd-row"><span class="fd-label">Maturity date</span><span class="fd-val">04 Jul 2026</span></div>
+        </div>
+        <div class="fd-footer">
+          <div><div class="countdown-big">7 days</div><div class="countdown-sub">to maturity</div></div>
+          <div style="text-align:right"><div class="proj-amt">₹1,09,100</div><div class="proj-label">est. maturity</div></div>
+        </div>
+      </div>
+
+      <!-- CARD 2 -->
+      <div class="fd-card">
+        <div class="fd-card-head">
+          <div class="bank-name">Unity Small Finance Bank</div>
+          <div class="badge badge-active">Active</div>
+        </div>
+        <div class="fd-rows">
+          <div class="fd-row"><span class="fd-label">Principal</span><span class="fd-val">₹1,50,000</span></div>
+          <div class="fd-row"><span class="fd-label">Rate</span><span class="fd-val">9.50% p.a.</span></div>
+          <div class="fd-row"><span class="fd-label">Tenure</span><span class="fd-val">18 months</span></div>
+          <div class="fd-row"><span class="fd-label">Maturity date</span><span class="fd-val">28 Dec 2026</span></div>
+        </div>
+        <div class="fd-footer">
+          <div><div class="countdown-big">184 days</div><div class="countdown-sub">to maturity</div></div>
+          <div style="text-align:right"><div class="proj-amt">₹1,71,375</div><div class="proj-label">est. maturity</div></div>
+        </div>
+      </div>
+
+      <!-- CARD 3 -->
+      <div class="fd-card">
+        <div class="fd-card-head">
+          <div class="bank-name">ESAF Small Finance Bank</div>
+          <div class="badge badge-active">Active</div>
+        </div>
+        <div class="fd-rows">
+          <div class="fd-row"><span class="fd-label">Principal</span><span class="fd-val">₹1,00,000</span></div>
+          <div class="fd-row"><span class="fd-label">Rate</span><span class="fd-val">8.75% p.a.</span></div>
+          <div class="fd-row"><span class="fd-label">Tenure</span><span class="fd-val">24 months</span></div>
+          <div class="fd-row"><span class="fd-label">Maturity date</span><span class="fd-val">27 Jun 2028</span></div>
+        </div>
+        <div class="fd-footer">
+          <div><div class="countdown-big">730 days</div><div class="countdown-sub">to maturity</div></div>
+          <div style="text-align:right"><div class="proj-amt">₹1,17,500</div><div class="proj-label">est. maturity</div></div>
+        </div>
+      </div>
+
+      <div class="hint">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Tap the Suryoday card to continue →
+      </div>
+    </div>
+    <div class="bottom-nav">
+      <div class="bnav-item"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</div>
+      <div class="bnav-item active"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>My FDs</div>
+      <div class="bnav-item"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Returns</div>
+      <div class="bnav-item"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profile</div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════
+       SCREEN 2 — NOTIFICATIONS (S1)
+       ════════════════════════════════════ -->
+  <div class="screen" id="screen-notif">
+    <div class="nav-bar">
+      <div class="nav-back" onclick="goScreen('dashboard')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        My FDs
+      </div>
+      <h2>Notifications</h2>
+      <p>Pre-maturity alerts · S1</p>
+    </div>
+    <div class="body">
+      <div class="pill-row">
+        <div class="pill active" id="pill-push" onclick="switchTab('push')">T-7 Push</div>
+        <div class="pill" id="pill-sms" onclick="switchTab('sms')">T-3 SMS</div>
+        <div class="pill" id="pill-day0" onclick="switchTab('day0')">Day 0</div>
+      </div>
+
+      <!-- TAB: PUSH -->
+      <div id="tab-push">
+        <div class="sec-title">Push notification — T-7 days</div>
+        <div class="notif-card highlight-card" onclick="goScreen('earnings')">
+          <div class="notif-icon">
+            <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+          </div>
+          <div class="notif-content">
+            <div class="notif-title">Stable Money</div>
+            <div class="notif-body">Your ₹1,00,000 FD with Suryoday Small Finance Bank matures in 7 days on 04 Jul 2026. Log in to see how much you've earned.</div>
+            <div class="notif-time">Today, 10:00 AM</div>
+          </div>
+        </div>
+        <div class="hint" style="margin-bottom:12px">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Tap notification to see Earnings Summary →
+        </div>
+      </div>
+
+      <!-- TAB: SMS -->
+      <div id="tab-sms" style="display:none">
+        <div class="sec-title">SMS fallback — T-3 days</div>
+        <div class="sms-bubble">
+          <strong>SM-STABLE:</strong> 3 days left on your ₹1,00,000 FD with Suryoday SFB (04 Jul 2026). Here's what you've earned so far. Tap to view: stbl.mn/mat/xyz123
+        </div>
+        <div class="sec-title">T-3 push (same trigger)</div>
+        <div class="notif-card" onclick="goScreen('earnings')">
+          <div class="notif-icon">
+            <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+          </div>
+          <div class="notif-content">
+            <div class="notif-title">Stable Money</div>
+            <div class="notif-body">3 days left on your ₹1,00,000 FD. Here's what you've earned so far. Tap to see your maturity summary.</div>
+            <div class="notif-time">Today, 10:00 AM</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: DAY 0 -->
+      <div id="tab-day0" style="display:none">
+        <div class="sec-title">Day 0 — Maturity day push</div>
+        <div class="notif-card" onclick="goScreen('earnings')">
+          <div class="notif-icon" style="background:#E8F8F0">
+            <svg viewBox="0 0 24 24" stroke="#1A6B3C"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <div class="notif-content">
+            <div class="notif-title">Stable Money</div>
+            <div class="notif-body">Your ₹1,00,000 FD with Suryoday Small Finance Bank has matured today. Your maturity amount is ₹1,09,100. Tap to view.</div>
+            <div class="notif-time">Today, 9:00 AM</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-nav">
+      <div class="bnav-item"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</div>
+      <div class="bnav-item active"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>Alerts</div>
+      <div class="bnav-item"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Returns</div>
+      <div class="bnav-item"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profile</div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════
+       SCREEN 3 — EARNINGS SUMMARY (S2)
+       ════════════════════════════════════ -->
+  <div class="screen" id="screen-earnings">
+    <div class="earn-hero">
+      <div class="eh-bank">Suryoday Small Finance Bank</div>
+      <div class="eh-badge">
+        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Your FD has matured
+      </div>
+      <div class="eh-date">04 Jul 2026</div>
+      <div class="eh-amount">₹1,09,100</div>
+      <div class="eh-amount-label">total maturity amount</div>
+    </div>
+    <div class="body" style="padding-top:14px">
+
+      <div class="sec-title">Earnings breakdown</div>
+      <div class="earn-card">
+        <div class="earn-row"><span class="earn-label">Principal invested</span><span class="earn-value">₹1,00,000</span></div>
+        <div class="earn-row"><span class="earn-label">Interest earned</span><span class="earn-value green">+ ₹9,100.00</span></div>
+        <div class="earn-row"><span class="earn-label">Effective yield</span><span class="earn-value green">9.10% p.a.</span></div>
+        <div class="earn-row"><span class="earn-label bold">Maturity amount</span><span class="earn-value big">₹1,09,100.00</span></div>
+      </div>
+
+      <div class="sec-title">FD details</div>
+      <div class="earn-card">
+        <div class="earn-row"><span class="earn-label">Partner bank</span><span class="earn-value">Suryoday SFB</span></div>
+        <div class="earn-row"><span class="earn-label">Booking date</span><span class="earn-value">04 Jul 2025</span></div>
+        <div class="earn-row"><span class="earn-label">Tenure</span><span class="earn-value">12 months</span></div>
+        <div class="earn-row"><span class="earn-label">Maturity date</span><span class="earn-value">04 Jul 2026</span></div>
+      </div>
+
+
+      <button class="back-btn highlight-tap" onclick="goScreen('dashboard')" style="border-color:#1A5276;color:#1A5276">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        Back to portfolio
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- NAV BUTTONS -->
+
+
+<div class="watermark">Stable Money · Phase 1 Prototype · PM Launchpad Cohort 31 · Ankur</div>
+
+<script>
+  const screens = ['home','dashboard','notif','earnings'];
+
+  function goScreen(id) {
+    screens.forEach(s => {
+      document.getElementById('screen-'+s).classList.toggle('active', s===id);
+      const btn = document.getElementById('btn-'+s);
+      if(btn) btn.classList.toggle('active-btn', s===id);
+    });
+    [1,2,3,4].forEach(n => {
+      const idx = screens.indexOf(id)+1;
+      const circle = document.getElementById('sc'+n);
+      const label  = document.getElementById('sl'+n);
+      if(!circle) return;
+      circle.className = 'step-circle ' + (n < idx ? 'done' : n === idx ? 'active' : 'idle');
+      label.className  = 'step-label'   + (n === idx ? ' active' : '');
+      if(n<4){ const conn = document.getElementById('conn'+n); if(conn) conn.className = 'step-connector' + (n < idx ? ' done' : ''); }
+    });
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  function switchTab(tab) {
+    ['push','sms','day0'].forEach(t => {
+      document.getElementById('tab-'+t).style.display  = t===tab ? 'block' : 'none';
+      document.getElementById('pill-'+t).className = 'pill' + (t===tab ? ' active' : '');
+    });
+  }
+</script>
+</body>
+</html>
