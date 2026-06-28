@@ -399,66 +399,67 @@
        SCREEN 2 — NOTIFICATIONS (S1)
        ════════════════════════════════════ -->
   <div class="screen" id="screen-notif">
-    <div class="nav-bar">
-      <div class="nav-back" onclick="goScreen('dashboard')">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-        My FDs
+    <!-- LOCK SCREEN STYLE — app is not open -->
+    <div style="flex:1;background:#1A1A2E;display:flex;flex-direction:column;padding:0 0 20px">
+
+      <!-- LOCK SCREEN STATUS BAR -->
+      <div style="padding:14px 18px 8px;display:flex;justify-content:space-between;align-items:center">
+        <span style="color:#fff;font-size:12px;font-weight:600">10:00 AM</span>
+        <span style="color:#fff;font-size:11px;opacity:0.8">Sun, 28 Jun</span>
+        <span style="color:#fff;font-size:11px">5G ▪ ⚡</span>
       </div>
-      <h2>Notifications</h2>
-      <p>Notification received on your phone · S1</p>
-    </div>
-    <div class="body">
-      <div class="pill-row">
-        <div class="pill active" id="pill-push" onclick="switchTab('push')">T-7 Push</div>
-        <div class="pill" id="pill-sms" onclick="switchTab('sms')">T-3 SMS</div>
+
+      <!-- LOCK SCREEN TIME -->
+      <div style="text-align:center;padding:24px 0 28px">
+        <div style="font-size:52px;font-weight:200;color:#fff;letter-spacing:-2px">10:00</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.7);margin-top:4px">Sunday, 28 June 2026</div>
+      </div>
+
+      <!-- PILL TABS -->
+      <div style="display:flex;gap:8px;padding:0 16px;margin-bottom:14px">
+        <div class="pill active" id="pill-push" onclick="switchTab('push')" style="flex:1;text-align:center">T-7 Push</div>
+        <div class="pill" id="pill-sms" onclick="switchTab('sms')" style="flex:1;text-align:center">T-3 SMS</div>
       </div>
 
       <!-- TAB: PUSH -->
-      <div id="tab-push">
-        <div class="sec-title">Push notification — T-7 days</div>
-        <div class="notif-card highlight-card" onclick="goScreen('earnings')">
-          <div class="notif-icon">
-            <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      <div id="tab-push" style="padding:0 12px">
+        <!-- NOTIFICATION BANNER — lock screen style -->
+        <div class="highlight-card" onclick="goScreen('earnings')" style="background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);border-radius:16px;padding:14px;cursor:pointer;border:1px solid rgba(255,255,255,0.25)">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <div style="width:28px;height:28px;border-radius:8px;background:#1A5276;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </div>
+            <div style="font-size:11px;font-weight:700;color:#fff">Stable Money</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.6);margin-left:auto">now</div>
           </div>
-          <div class="notif-content">
-            <div class="notif-title">Stable Money</div>
-            <div class="notif-body">Your ₹1,00,000 FD with Suryoday Small Finance Bank matures in 7 days on 04 Jul 2026. Log in to see how much you've earned.</div>
-            <div class="notif-time">Today, 10:00 AM</div>
-          </div>
+          <div style="font-size:12px;color:#fff;line-height:1.5">Your ₹1,00,000 FD with Suryoday Small Finance Bank matures in 7 days on 04 Jul 2026. Log in to see how much you've earned.</div>
         </div>
-        <div class="hint" style="margin-bottom:12px">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          Tap notification to see Earnings Summary →
+        <div class="hint" style="margin-top:12px;color:rgba(255,255,255,0.6)">
+          <svg viewBox="0 0 24 24" style="stroke:rgba(255,255,255,0.6)"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Tap notification to open Earnings Summary →
         </div>
       </div>
 
       <!-- TAB: SMS -->
-      <div id="tab-sms" style="display:none">
-        <div class="sec-title">SMS fallback — T-3 days</div>
-        <div class="sms-bubble">
-          <strong>SM-STABLE:</strong> 3 days left on your ₹1,00,000 FD with Suryoday SFB (04 Jul 2026). Here's what you've earned so far. Tap to view: stbl.mn/mat/xyz123
+      <div id="tab-sms" style="display:none;padding:0 12px">
+        <div class="sms-bubble" style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:#fff">
+          <strong style="color:rgba(255,255,255,0.8)">SM-STABLE:</strong> 3 days left on your ₹1,00,000 FD with Suryoday SFB (04 Jul 2026). Here's what you've earned so far. Tap to view: stbl.mn/mat/xyz123
         </div>
-        <div class="sec-title">T-3 push (same trigger)</div>
-        <div class="notif-card" onclick="goScreen('earnings')">
-          <div class="notif-icon">
-            <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
-          </div>
-          <div class="notif-content">
-            <div class="notif-title">Stable Money</div>
-            <div class="notif-body">3 days left on your ₹1,00,000 FD. Here's what you've earned so far. Tap to see your maturity summary.</div>
-            <div class="notif-time">Today, 10:00 AM</div>
+        <div style="margin-top:12px;font-size:10px;color:rgba(255,255,255,0.5);text-align:center">SMS sent 2 min after push if not opened</div>
+        <div style="margin-top:16px">
+          <div class="notif-card" onclick="goScreen('earnings')" style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2)">
+            <div class="notif-icon" style="background:rgba(255,255,255,0.15)">
+              <svg viewBox="0 0 24 24" stroke="#fff"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+            </div>
+            <div class="notif-content">
+              <div class="notif-title" style="color:#fff">Stable Money</div>
+              <div class="notif-body" style="color:rgba(255,255,255,0.75)">3 days left on your ₹1,00,000 FD. Here's what you've earned so far. Tap to see your maturity summary.</div>
+              <div class="notif-time" style="color:rgba(255,255,255,0.5)">Today, 10:00 AM</div>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- TAB: DAY 0 -->
-
-    </div>
-    <div class="bottom-nav">
-      <div class="bnav-item" onclick="goScreen('home')"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>FD</div>
-      <div class="bnav-item"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Bonds</div>
-      <div class="bnav-item"><svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>FD Card</div>
-      <div class="bnav-item active"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>Passbook</div>
     </div>
   </div>
 
